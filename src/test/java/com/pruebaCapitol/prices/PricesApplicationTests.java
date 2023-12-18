@@ -1,5 +1,7 @@
 package com.pruebaCapitol.prices;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.math.RoundingMode;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -15,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.pruebaCapitol.prices.entity.Prices;
+import com.pruebaCapitol.prices.utils.exceptions.ErrorResponse;
 
 @SpringBootTest
 class PricesApplicationTests {
@@ -30,9 +33,11 @@ class PricesApplicationTests {
 	}
 	
 	@Test
-	void prueba1() throws Exception {
+	void salidaCorrectaPeticion1() throws Exception {
 		HttpClient client = HttpClient.newBuilder().build();
+		
 	    HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://localhost:8080/precios?fecha_aplicacion=2020-06-14-10.00.00&id_producto=35455&id_cadena=1")).build();
+	    
 	    HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
 	    String salidaJson = response.body();
 	    Gson gson = new GsonBuilder().create();
@@ -42,9 +47,11 @@ class PricesApplicationTests {
 	}
 	
 	@Test
-	void prueba2() throws Exception {
+	void salidaCorrectaPeticion2() throws Exception {
 		HttpClient client = HttpClient.newBuilder().build();
+		
 	    HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://localhost:8080/precios?fecha_aplicacion=2020-06-14-16.00.00&id_producto=35455&id_cadena=1")).build();
+	    
 	    HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
 	    String salidaJson = response.body();
 	    Gson gson = new GsonBuilder().create();
@@ -54,9 +61,11 @@ class PricesApplicationTests {
 	}
 	
 	@Test
-	void prueba3() throws Exception {
+	void salidaCorrectaPeticion3() throws Exception {
 		HttpClient client = HttpClient.newBuilder().build();
+		
 	    HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://localhost:8080/precios?fecha_aplicacion=2020-06-14-21.00.00&id_producto=35455&id_cadena=1")).build();
+	    
 	    HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
 	    String salidaJson = response.body();
 	    Gson gson = new GsonBuilder().create();
@@ -66,9 +75,11 @@ class PricesApplicationTests {
 	}
 	
 	@Test
-	void prueba4() throws Exception {
+	void salidaCorrectaPeticion4() throws Exception {
 		HttpClient client = HttpClient.newBuilder().build();
+		
 	    HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://localhost:8080/precios?fecha_aplicacion=2020-06-15-10.00.00&id_producto=35455&id_cadena=1")).build();
+	    
 	    HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
 	    String salidaJson = response.body();
 	    Gson gson = new GsonBuilder().create();
@@ -78,9 +89,11 @@ class PricesApplicationTests {
 	}
 	
 	@Test
-	void prueba5() throws Exception {
+	void salidaCorrectaPeticion5() throws Exception {
 		HttpClient client = HttpClient.newBuilder().build();
+		
 	    HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://localhost:8080/precios?fecha_aplicacion=2020-06-16-21.00.00&id_producto=35455&id_cadena=1")).build();
+	    
 	    HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
 	    String salidaJson = response.body();
 	    Gson gson = new GsonBuilder().create();
@@ -88,6 +101,60 @@ class PricesApplicationTests {
 	  //precio de salida de la peticion es igual al esperado
 	    assert(Math.abs(38.95-price.getPrice()) < 0.0001f);
 	}
+	
+	@Test
+	void errorFormatoFechaMesIncorrecto() throws Exception {
+		HttpClient client = HttpClient.newBuilder().build();
+		
+	    HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://localhost:8080/precios?fecha_aplicacion=2020-13-16-21.00.00&id_producto=35455&id_cadena=1")).build();
+	    
+	    HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+	    String salidaJson = response.body();
+	    Gson gson = new GsonBuilder().create();
+	    ErrorResponse error = gson.fromJson(salidaJson, ErrorResponse.class);
+	    assertEquals(error.getMessage(), "Formato de fecha no valido. Formato correcto -> yyyy-MM-dd-hh.mm.ss");
+	}
+	
+	@Test
+	void errorFormatoFechaIncorrecto() throws Exception {
+		HttpClient client = HttpClient.newBuilder().build();
+		
+	    HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://localhost:8080/precios?fecha_aplicacion=2020-a-16-21.00.00&id_producto=35455&id_cadena=1")).build();
+	    
+	    HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+	    String salidaJson = response.body();
+	    Gson gson = new GsonBuilder().create();
+	    ErrorResponse error = gson.fromJson(salidaJson, ErrorResponse.class);
+	    assertEquals(error.getMessage(), "Formato de fecha no valido. Formato correcto -> yyyy-MM-dd-hh.mm.ss");
+	}
+	
+	@Test
+	void errorFormatoNumero() throws Exception {
+		HttpClient client = HttpClient.newBuilder().build();
+		
+	    HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://localhost:8080/precios?fecha_aplicacion=2020-06-16-21.00.00&id_producto=35455&id_cadena=a")).build();
+	    
+	    HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+	    String salidaJson = response.body();
+	    Gson gson = new GsonBuilder().create();
+	    ErrorResponse error = gson.fromJson(salidaJson, ErrorResponse.class);
+	    assertEquals(error.getMessage(), "Formato de numero incorrecto.");
+	}
+	
+	@Test
+	void precioNoExistente() throws Exception {
+		HttpClient client = HttpClient.newBuilder().build();
+		
+	    HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://localhost:8080/precios?fecha_aplicacion=2020-06-16-21.00.00&id_producto=35455&id_cadena=99")).build();
+	    
+	    HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+	    String salidaJson = response.body();
+	    Gson gson = new GsonBuilder().create();
+	    ErrorResponse error = gson.fromJson(salidaJson, ErrorResponse.class);
+	    assertEquals(error.getMessage(), "No se encontro precio adecuado para los parametros de entrada.");
+	}
+	
+	
 
 
 }
