@@ -20,14 +20,17 @@ public class PricesServiceImpl implements PricesService{
 	PricesRepository repositorio;
 	
 	@Override
-	public Optional<Prices> obtenerPrecio(String fechaAplicacion, String idProducto, String idCadena) {
-		Optional<Prices> precio = null; 
+	public Prices obtenerPrecio(String fechaAplicacion, String idProducto, String idCadena) {
+		Prices precio = null; 
 		try {
 			boolean formatoCorrecto = PricesUtils.checkFormatoFechaCorrecto(fechaAplicacion);
 			int idProductoCorrecto = PricesUtils.checkEsNumero(idProducto);
 			int idCadenaCorrecto = PricesUtils.checkEsNumero(idCadena);
 			
-			precio = repositorio.findById(1);
+				List<Prices> lista = repositorio.obtenerProductoPorFechaEidProductoYCadena(fechaAplicacion, idProductoCorrecto, idCadenaCorrecto);
+				//Lista ordenada por prioridad descendente
+				//El elemento 0 es el de mayor prioridad
+				precio = lista.get(0);
 		}
 		catch(NumberFormatException ex) {
 				throw new InvalidNumber();

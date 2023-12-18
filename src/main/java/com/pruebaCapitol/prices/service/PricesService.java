@@ -7,5 +7,5 @@ import com.pruebaCapitol.prices.entity.Prices;
 
 public interface PricesService {
 
-	Optional<Prices> obtenerPrecio(String fechaAplicacion, String idProducto, String idCaden);
+	Prices obtenerPrecio(String fechaAplicacion, String idProducto, String idCaden);
 }

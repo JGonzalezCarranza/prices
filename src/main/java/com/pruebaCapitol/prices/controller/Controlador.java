@@ -18,7 +18,7 @@ public class Controlador {
 	private PricesService service;
 	
 	@GetMapping("precios")
-	public Optional<Prices> getPrecio(
+	public Prices getPrecio(
 			@RequestParam("fecha_aplicacion") String fecha,
 			@RequestParam("id_producto") String idProducto,
 			@RequestParam("id_cadena") String idCadena) {
