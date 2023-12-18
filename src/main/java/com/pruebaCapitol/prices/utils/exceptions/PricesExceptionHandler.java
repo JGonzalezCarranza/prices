@@ -25,4 +25,12 @@ public class PricesExceptionHandler extends ResponseEntityExceptionHandler{
 		response.setStatus(HttpStatus.BAD_REQUEST);
 		return new ResponseEntity<ErrorResponse>(response, HttpStatus.BAD_REQUEST);
 	}
+	
+	@ExceptionHandler(value = {PriceNotFound.class})
+	public ResponseEntity<ErrorResponse> handlePriceNotFoundException(RuntimeException e, WebRequest request){
+		ErrorResponse response = new ErrorResponse();
+		response.setMessage("No se encontro precio adecuado para los parametros de entrada.");
+		response.setStatus(HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<ErrorResponse>(response, HttpStatus.BAD_REQUEST);
+	}
 }

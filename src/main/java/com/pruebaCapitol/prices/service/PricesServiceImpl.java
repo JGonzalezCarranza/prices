@@ -1,5 +1,6 @@
 package com.pruebaCapitol.prices.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +12,7 @@ import com.pruebaCapitol.prices.repository.PricesRepository;
 import com.pruebaCapitol.prices.utils.PricesUtils;
 import com.pruebaCapitol.prices.utils.exceptions.InvalidDateException;
 import com.pruebaCapitol.prices.utils.exceptions.InvalidNumber;
+import com.pruebaCapitol.prices.utils.exceptions.PriceNotFound;
 
 
 @Service
@@ -27,10 +29,16 @@ public class PricesServiceImpl implements PricesService{
 			int idProductoCorrecto = PricesUtils.checkEsNumero(idProducto);
 			int idCadenaCorrecto = PricesUtils.checkEsNumero(idCadena);
 			
-				List<Prices> lista = repositorio.obtenerProductoPorFechaEidProductoYCadena(fechaAplicacion, idProductoCorrecto, idCadenaCorrecto);
-				//Lista ordenada por prioridad descendente
-				//El elemento 0 es el de mayor prioridad
-				precio = lista.get(0);
+			List<Prices> lista = new ArrayList<>();
+			lista = repositorio.obtenerProductoPorFechaEidProductoYCadena(fechaAplicacion, idProductoCorrecto, idCadenaCorrecto);
+				
+			if(lista.isEmpty()) {
+				throw new PriceNotFound();
+			}
+			//Lista ordenada por prioridad descendente
+			//El elemento 0 es el de mayor prioridad
+			precio = lista.get(0);
+			
 		}
 		catch(NumberFormatException ex) {
 				throw new InvalidNumber();
