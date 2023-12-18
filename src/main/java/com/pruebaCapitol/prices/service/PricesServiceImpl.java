@@ -2,12 +2,12 @@ package com.pruebaCapitol.prices.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pruebaCapitol.prices.entity.Prices;
+import com.pruebaCapitol.prices.model.RequestedPrice;
 import com.pruebaCapitol.prices.repository.PricesRepository;
 import com.pruebaCapitol.prices.utils.PricesUtils;
 import com.pruebaCapitol.prices.utils.exceptions.InvalidDateException;
@@ -22,8 +22,9 @@ public class PricesServiceImpl implements PricesService{
 	PricesRepository repositorio;
 	
 	@Override
-	public Prices obtenerPrecio(String fechaAplicacion, String idProducto, String idCadena) {
-		Prices precio = null; 
+	public RequestedPrice obtenerPrecio(String fechaAplicacion, String idProducto, String idCadena) {
+		Prices price = null; 
+		RequestedPrice finalPrice = null;
 		try {
 			boolean formatoCorrecto = PricesUtils.checkFormatoFechaCorrecto(fechaAplicacion);
 			int idProductoCorrecto = PricesUtils.checkEsNumero(idProducto);
@@ -37,7 +38,16 @@ public class PricesServiceImpl implements PricesService{
 			}
 			//Lista ordenada por prioridad descendente
 			//El elemento 0 es el de mayor prioridad
-			precio = lista.get(0);
+			price = lista.get(0);
+			
+			finalPrice = RequestedPrice.builder()
+					.brandId(price.getBrandId())
+					.endDate(price.getEndDate())
+					.id(price.getId())
+					.price(price.getPrice())
+					.priceList(price.getPriceList())
+					.startDate(price.getStartDate())
+					.build();
 			
 		}
 		catch(NumberFormatException ex) {
@@ -46,7 +56,7 @@ public class PricesServiceImpl implements PricesService{
 		catch(InvalidDateException ex) {
 			throw new InvalidDateException();
 		}
-		return precio;
+		return finalPrice;
 	}
 	
 }

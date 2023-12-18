@@ -37,6 +37,7 @@ class PricesApplicationTests {
 	    String salidaJson = response.body();
 	    Gson gson = new GsonBuilder().create();
 	    Prices price = gson.fromJson(salidaJson, Prices.class);
+	    //precio de salida de la peticion es igual al esperado
 	    assert(Math.abs(35.50-price.getPrice())< 0.0001f );
 	}
 	
@@ -48,6 +49,7 @@ class PricesApplicationTests {
 	    String salidaJson = response.body();
 	    Gson gson = new GsonBuilder().create();
 	    Prices price = gson.fromJson(salidaJson, Prices.class);
+	  //precio de salida de la peticion es igual al esperado
 	    assert(Math.abs(25.45-price.getPrice())< 0.0001f);
 	}
 	
@@ -59,6 +61,7 @@ class PricesApplicationTests {
 	    String salidaJson = response.body();
 	    Gson gson = new GsonBuilder().create();
 	    Prices price = gson.fromJson(salidaJson, Prices.class);
+	  //precio de salida de la peticion es igual al esperado
 	    assert(Math.abs(35.50-price.getPrice())< 0.0001f);
 	}
 	
@@ -70,6 +73,7 @@ class PricesApplicationTests {
 	    String salidaJson = response.body();
 	    Gson gson = new GsonBuilder().create();
 	    Prices price = gson.fromJson(salidaJson, Prices.class);
+	  //precio de salida de la peticion es igual al esperado
 	    assert(Math.abs(30.5-price.getPrice())< 0.0001f );
 	}
 	
@@ -81,6 +85,7 @@ class PricesApplicationTests {
 	    String salidaJson = response.body();
 	    Gson gson = new GsonBuilder().create();
 	    Prices price = gson.fromJson(salidaJson, Prices.class);
+	  //precio de salida de la peticion es igual al esperado
 	    assert(Math.abs(38.95-price.getPrice()) < 0.0001f);
 	}
 
